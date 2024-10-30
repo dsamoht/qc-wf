@@ -16,8 +16,7 @@ process REMOVE_SYNTHETIC_CONTAMINANTS {
 	def input = "in1=\"${reads[0]}\" in2=\"${reads[1]}\""
 	def output = "out=\"${name}_no_synthetic_contaminants_R1.fastq.gz\" out2=\"${name}_no_synthetic_contaminants_R2.fastq.gz\""
 	"""
-	maxmem=\$(echo ${task.memory} | sed 's/ //g' | sed 's/B//g')
-	bbduk.sh -Xmx\"\$maxmem\" $input $output k=31 ref=$phix174ill,$artefacts qin=$params.qin threads=${task.cpus} ow &> synthetic_contaminants_out.log
+	bbduk.sh $input $output k=31 ref=$phix174ill,$artefacts qin=$params.qin threads=${task.cpus} ow &> synthetic_contaminants_out.log
 	"""
 }
 
@@ -37,7 +36,7 @@ process TRIM {
         container params.docker_container_bbmap
     }
 
-	publishDir "${params.outdir}/${params.prefix}/trimmed", mode: 'copy'
+	publishDir "${params.outdir}/${params.samplename}/trimmed", mode: 'copy'
 	
 	input:
 	tuple file(adapters), val(name), file(reads)
@@ -47,9 +46,8 @@ process TRIM {
 
    	script:
 	def input = "in1=\"${reads[0]}\" in2=\"${reads[1]}\""
-	def output = "out=\"${name}_trimmed_R1.fastq.gz\" out2=\"${name}_trimmed_R2.fq.gz\" outs=\"${name}_trimmed_singletons.fastq.gz\""
+	def output = "out=\"${name}_trimmed_R1.fastq.gz\" out2=\"${name}_trimmed_R2.fastq.gz\" outs=\"${name}_trimmed_singletons.fastq.gz\""
 	"""
-	maxmem=\$(echo ${task.memory} | sed 's/ //g' | sed 's/B//g')
-	bbduk.sh -Xmx\"\$maxmem\" $input $output ktrim=r k=$params.kcontaminants mink=$params.mink hdist=$params.hdist qtrim=rl trimq=$params.phred  minlength=$params.minlength ref=$adapters qin=$params.qin threads=${task.cpus} tbo tpe ow &> trimming_out.log
+	bbduk.sh $input $output ktrim=r k=$params.kcontaminants mink=$params.mink hdist=$params.hdist qtrim=rl trimq=$params.phred  minlength=$params.minlength ref=$adapters qin=$params.qin threads=${task.cpus} tbo tpe ow &> trimming_out.log
 	"""
 }
