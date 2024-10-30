@@ -7,7 +7,7 @@ QC workflow for Illumina reads
 ```
 nextflow run qc-wf.nf \
     --reads1 /path/to/sample_R1_001.fastq.gz \
-    --reads2 /path/to/sample_R1_001.fastq.gz \ 
+    --reads2 /path/to/sample_R2_001.fastq.gz \ 
     --outdir qc-wf_out \
     --samplename qc-wf_out \
     -profile singularity
